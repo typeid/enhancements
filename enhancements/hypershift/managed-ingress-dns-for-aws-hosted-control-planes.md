@@ -251,8 +251,8 @@ type AWSDNSZoneStatus struct {
 
 ```go
 // On HostedClusterSpec (cross-field validation):
-// +openshift:validation:FeatureGateAwareXValidation:featureGate=AWSManagedDNS,rule="!self.platform.?aws.?managedDNS.hasValue() || self.dns.?publicZoneID.orValue('') == ''",message="publicZoneID and managedDNS are mutually exclusive: managedDNS creates the public ingress zone"
-// +openshift:validation:FeatureGateAwareXValidation:featureGate=AWSManagedDNS,rule="!self.platform.?aws.?managedDNS.hasValue() || self.platform.?aws.?sharedVPC.hasValue() || self.dns.?privateZoneID.orValue('') == ''",message="privateZoneID and managedDNS are mutually exclusive for non-shared-VPC clusters: managedDNS creates the private ingress zone"
+// +openshift:validation:FeatureGateAwareXValidation:featureGate=AWSManagedDNS,rule="!self.platform.?aws.?managedDNS.hasValue() || !self.dns.?publicZoneID.hasValue()",message="publicZoneID and managedDNS are mutually exclusive: managedDNS creates the public ingress zone"
+// +openshift:validation:FeatureGateAwareXValidation:featureGate=AWSManagedDNS,rule="!self.platform.?aws.?managedDNS.hasValue() || self.platform.?aws.?sharedVPC.hasValue() || !self.dns.?privateZoneID.hasValue()",message="privateZoneID and managedDNS are mutually exclusive for non-shared-VPC clusters: managedDNS creates the private ingress zone"
 ```
 
 The `.hypershift.local` zone has no conflict: `SharedVPC.LocalZoneID` is always required when SharedVPC is set (regardless of `managedDNS`), and without SharedVPC the PrivateLink controller auto-creates the local zone with no user-provided zone ID to conflict with.
